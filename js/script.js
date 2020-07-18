@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const days = document.querySelector('#days');
         const hours = document.querySelector('#hours');
         const min = document.querySelector('#minutes');
-        const sec = document.querySelector('#seconds');
+        const sec = timer.querySelector('#seconds');
         const timeInterval = setInterval(updateClock, 1000);
 
         updateClock();
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sec.innerHTML = getZero(t.sec);
 
             if (t.total <= 0) {
-                clearInterval();
+                clearInterval(timeInterval);
             }
         }
     }
