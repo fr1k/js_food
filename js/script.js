@@ -140,12 +140,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //классы для меню
     class MenuItem {
-        constructor(src, atl, title, descr, price, parentSelector) {
+        constructor(src, atl, title, descr, price, parentSelector,...classes) {
             this.src = src;
             this.atl = atl;
             this.title = title;
             this.descr = descr;
             this.price = price;
+            this.classes=classes;
             this.transfer = 71;
             this.parent = document.querySelector(parentSelector);
             this.changeToRUB();
@@ -157,8 +158,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         render() {
             const element = document.createElement("div");
+
+            if (this.classes.length===0) {
+                this.element='menu__item';
+                element.classList.add(this.element);
+            }else {
+                this.classes.forEach(className=>element.classList.add(className));
+            }
+            
             element.innerHTML = `
-            <div class="menu__item">
                 <img src=${this.src} alt=${this.atl} />
                 <h3 class="menu__item-subtitle">${this.title}</h3>
                 <div class="menu__item-descr">${this.descr}</div>
@@ -167,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="menu__item-cost">Цена:</div>
                     <div class="menu__item-total"><span>${this.price}</span> руб/день</div>
                 </div>
-            </div>
+            
         `;
             this.parent.append(element);
         }
@@ -180,6 +188,25 @@ document.addEventListener("DOMContentLoaded", () => {
         'Меню "Фитнес"',
         'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
         9,
+        ".menu .container",
+        'menu__item',
+        'big'
+    ).render();
+    new MenuItem(
+        "img/tabs/vegy.jpg",
+        "vegy",
+        'Меню "Фитнес"',
+        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+        9,
         ".menu .container"
+    ).render();
+    new MenuItem(
+        "img/tabs/vegy.jpg",
+        "vegy",
+        'Меню "Фитнес"',
+        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+        9,
+        ".menu .container",
+        'menu__item'
     ).render();
 });
