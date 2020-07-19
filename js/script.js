@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.add('show');
         modal.classList.remove('hide');
         document.body.style.overflow = 'hidden';
-        // clearInterval(modalTimerid);
+        clearInterval(modalTimerid);
     }
 
     modalTrigger.forEach(bnt => {
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // const modalTimerid = setTimeout(modalShow, 5000);
+    const modalTimerid = setTimeout(modalShow, 5000);
 
     function modalShowByScroll() {
         // console.log('1');
