@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const modalTrigger = document.querySelectorAll("[data-modal]");
     const modal = document.querySelector(".modal");
-    const modalCloseBtn = document.querySelector("[data-close]");
+    // const modalCloseBtn = document.querySelector("[data-close]");
 
     function modalShow() {
         modal.classList.add("show");
@@ -109,10 +109,13 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.classList.remove("show");
         document.body.style.overflow = "";
     }
-    modalCloseBtn.addEventListener("click", modalClose);
+    // modalCloseBtn.addEventListener("click", modalClose);
 
     modal.addEventListener("click", (event) => {
-        if (event.target === modal) {
+        if (
+            event.target === modal ||
+            event.target.getAttribute("data-close") == ""
+        ) {
             modalClose();
         }
     });
@@ -140,13 +143,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //классы для меню
     class MenuItem {
-        constructor(src, atl, title, descr, price, parentSelector,...classes) {
+        constructor(src, atl, title, descr, price, parentSelector, ...classes) {
             this.src = src;
             this.atl = atl;
             this.title = title;
             this.descr = descr;
             this.price = price;
-            this.classes=classes;
+            this.classes = classes;
             this.transfer = 71;
             this.parent = document.querySelector(parentSelector);
             this.changeToRUB();
@@ -159,13 +162,15 @@ document.addEventListener("DOMContentLoaded", () => {
         render() {
             const element = document.createElement("div");
 
-            if (this.classes.length===0) {
-                this.element='menu__item';
+            if (this.classes.length === 0) {
+                this.element = "menu__item";
                 element.classList.add(this.element);
-            }else {
-                this.classes.forEach(className=>element.classList.add(className));
+            } else {
+                this.classes.forEach((className) =>
+                    element.classList.add(className)
+                );
             }
-            
+
             element.innerHTML = `
                 <img src=${this.src} alt=${this.atl} />
                 <h3 class="menu__item-subtitle">${this.title}</h3>
@@ -181,7 +186,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    
     new MenuItem(
         "img/tabs/vegy.jpg",
         "vegy",
@@ -189,8 +193,8 @@ document.addEventListener("DOMContentLoaded", () => {
         'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
         9,
         ".menu .container",
-        'menu__item',
-        'big'
+        "menu__item",
+        "big"
     ).render();
     new MenuItem(
         "img/tabs/vegy.jpg",
@@ -207,6 +211,85 @@ document.addEventListener("DOMContentLoaded", () => {
         'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
         9,
         ".menu .container",
-        'menu__item'
+        "menu__item"
     ).render();
+
+    //Forms
+
+    const forms = document.querySelectorAll("form");
+
+    const massage = {
+        loading: "./img/spinner.svg",
+        succsess: "good",
+        failure: "error",
+    };
+
+    forms.forEach((item) => {
+        postData(item);
+    });
+
+    function postData(form) {
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const statusMassage = document.createElement("img");
+            statusMassage.src=massage.loading;
+            statusMassage.style.cssText=`
+                display:block;
+                margin:auto;
+            `;
+            // form.append(statusMassage);
+            form.insertAdjacentElement('afterend',statusMassage);
+
+            const request = new XMLHttpRequest();
+            request.open("POST", "./server.php");
+
+            request.setRequestHeader("Content-type", "application/json");
+            const formData = new FormData(form);
+
+            const obj = {};
+
+            formData.forEach(function (value, key) {
+                obj[key] = value;
+            });
+
+            const json = JSON.stringify(obj);
+
+            request.send(json);
+            request.addEventListener("load", () => {
+                if (request.status === 200) {
+                    console.log(request.response);
+                    showThanksModal(massage.succsess);
+                    form.reset();
+                    statusMassage.remove();
+                } else {
+                    showThanksModal(massage.succsess);
+                }
+            });
+        });
+    }
+
+    function showThanksModal(massage) {
+        const prevModalDialog = document.querySelector(".modal__dialog");
+
+        prevModalDialog.classList.add("hide");
+        modalShow();
+
+        const thanksModal = document.createElement("div");
+        thanksModal.classList.add("modal__dialog");
+        thanksModal.innerHTML = `
+            <div class='modal__content'>
+                <div data-close="" class="modal__close">×</div>
+                <div class='modal__title'>${massage}</div>
+            </div>    
+        `;
+
+        document.querySelector(".modal").append(thanksModal);
+        setTimeout(() => {
+            thanksModal.remove();
+            prevModalDialog.classList.add("show");
+            prevModalDialog.classList.remove("hide");
+            modalClose();
+        }, 3000);
+    }
 });
